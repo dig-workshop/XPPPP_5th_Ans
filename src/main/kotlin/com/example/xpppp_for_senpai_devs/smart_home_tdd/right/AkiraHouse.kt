@@ -1,43 +1,57 @@
 package com.example.xpppp_for_senpai_devs.smart_home_tdd.right
+
+import java.util.*
+import kotlin.concurrent.schedule
+
 //Step3までの実装が終わった状態です。
 //wrongのコードの状態からここまで作ってもらおうと思ってます。
 interface Switch {
-    fun isOnCounter():Int
+    fun isOnCounter(): Int
     fun isOnCounterReset()
-    fun isOn():Boolean
+    fun isOn(): Boolean
 }
+
 interface Bulb {
     fun turnOn()
     fun turnOff()
 }
+
 interface InfoDisplay {
     fun displayBulbWarning()
 }
 
-class AkiraHouse (
+class AkiraHouse(
     private val bulb: Bulb,
     private val switch: Switch,
     private val infoDisplay: InfoDisplay
-): SmartHome {
+) : SmartHome {
     override var bulbWarning = false
     override fun run() {
-            lighting()
-            if(switch.isOnCounter() > 4){
-                bulbWarning = true
-            }
-            if (bulbWarning){
-                infoDisplay.displayBulbWarning()
-            }
+        lighting()
+        if (switch.isOnCounter() > 4) {
+            bulbWarning = true
+        }
+        if (bulbWarning) {
+            infoDisplay.displayBulbWarning()
+        }
     }
-   private fun lighting() {
-        if(switch.isOn()){
+
+    private fun lighting() {
+        if (switch.isOn()) {
             bulb.turnOn()
-        }else{
+            autoTurnOffBulb()
+        } else {
             bulb.turnOff()
         }
     }
 
     override fun bulbChanged() {
         switch.isOnCounterReset()
+    }
+    override fun autoTurnOffBulb() {
+        val timer = Timer()
+        timer.schedule(1000) {
+            bulb.turnOff()
+        }
     }
 }

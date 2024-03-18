@@ -3,6 +3,7 @@ package com.example.xpppp_for_senpai_devs.smart_home_tdd.right
 interface SmartHome{
     var bulbWarning: Boolean
     fun bulbChanged()
+    fun autoTurnOffBulb()
     fun run()
 }
 
